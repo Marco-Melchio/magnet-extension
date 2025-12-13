@@ -85,15 +85,45 @@ $("autofill").addEventListener("click", async () => {
 // Senden an Background
 // ----------------------
 $("send").addEventListener("click", async () => {
+    const tab = await getActiveTab();
+
+    let magnet = window.__LAST_MAGNET__ || null;
+    let pageUrl = tab?.url || null;
+    let title = $("title").value.trim();
+    let year = $("year").value.trim();
+    let type = $("type").value === "auto" ? undefined : $("type").value;
+
+    // Fallback: direkt zur Laufzeit aus dem Content-Script holen
+    if (!magnet || !title || !year || !type) {
+        try {
+            const extracted = await browser.tabs.sendMessage(tab.id, { type: "EXTRACT" });
+            if (extracted) {
+                magnet = magnet || extracted.magnet || null;
+                pageUrl = pageUrl || extracted.pageUrl || null;
+                if (!title) title = extracted.title || "";
+                if (!year) year = extracted.year || "";
+                if (!type) type = extracted.typeGuess || undefined;
+            }
+        } catch (err) {
+            console.warn("[Popup] Konnte Content-Script nicht erreichen:", err);
+        }
+    }
+
     const payload = {
-        title: $("title").value.trim(),
-        year: $("year").value.trim(),
-        type: $("type").value === "auto" ? undefined : $("type").value,
+        title,
+        year,
+        type,
         receiverUrl: $("receiver").value.trim(),
         token: $("token").value.trim(),
-        magnet: window.__LAST_MAGNET__ || null,
-        pageUrl: null
+        magnet,
+        pageUrl
     };
+
+    if (!payload.magnet) {
+        setStatus("Kein Magnet-Link gefunden.");
+        console.warn("[Popup] Abbruch: kein Magnet-Link im Payload", payload);
+        return;
+    }
 
     console.log("[Popup] Sende Payload:", payload);
 
