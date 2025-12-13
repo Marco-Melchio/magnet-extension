@@ -1,0 +1,14 @@
+services:
+  receiver:
+    build: ./app
+    container_name: media-receiver
+    ports:
+      - "8787:8787"
+    volumes:
+      - ./data:/data
+      - /volume2/EmbyFiles:/media
+    environment:
+      - MOVIES_DIR=/media/Movies
+      - SERIES_DIR=/media/Series
+      - QUEUE_FILE=/data/queue.jsonl
+    restart: unless-stopped

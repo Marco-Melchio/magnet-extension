@@ -1,0 +1,30 @@
+{
+  "manifest_version": 2,
+  "name": "Media Sender (Test)",
+  "version": "1.1.1",
+  "description": "Erfasst Titel/Jahr/Typ + Magnet-Link und sendet an einen Receiver im LAN.",
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "storage",
+    "http://192.168.0.220:8787/*"
+  ],
+  "browser_action": {
+    "default_title": "Media Sender",
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://1337x.to/torrent/*",
+        "*://*.1337x.to/torrent/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
