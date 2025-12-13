@@ -11,6 +11,16 @@ function setStatus(msg) {
     $("status").textContent = msg;
 }
 
+async function extractFromContent(tabId) {
+    try {
+        return await browser.tabs.sendMessage(tabId, { type: "EXTRACT" });
+    } catch (err) {
+        console.warn("[Popup] Konnte Content-Script nicht erreichen:", err);
+        setStatus("Content-Script nicht aktiv.");
+        return null;
+    }
+}
+
 async function getActiveTab() {
     const tabs = await browser.tabs.query({ active: true, currentWindow: true });
     return tabs[0];
@@ -53,7 +63,7 @@ function extractTitleAndYear(raw) {
 // ----------------------
 $("autofill").addEventListener("click", async () => {
     const tab = await getActiveTab();
-    const data = await browser.tabs.sendMessage(tab.id, { type: "EXTRACT" });
+    const data = tab ? await extractFromContent(tab.id) : null;
 
     if (!data) {
         setStatus("Keine Daten erhalten (Content-Script evtl. nicht aktiv).");
@@ -95,17 +105,13 @@ $("send").addEventListener("click", async () => {
 
     // Fallback: direkt zur Laufzeit aus dem Content-Script holen
     if (!magnet || !title || !year || !type) {
-        try {
-            const extracted = await browser.tabs.sendMessage(tab.id, { type: "EXTRACT" });
-            if (extracted) {
-                magnet = magnet || extracted.magnet || null;
-                pageUrl = pageUrl || extracted.pageUrl || null;
-                if (!title) title = extracted.title || "";
-                if (!year) year = extracted.year || "";
-                if (!type) type = extracted.typeGuess || undefined;
-            }
-        } catch (err) {
-            console.warn("[Popup] Konnte Content-Script nicht erreichen:", err);
+        const extracted = tab ? await extractFromContent(tab.id) : null;
+        if (extracted) {
+            magnet = magnet || extracted.magnet || null;
+            pageUrl = pageUrl || extracted.pageUrl || null;
+            if (!title) title = extracted.title || "";
+            if (!year) year = extracted.year || "";
+            if (!type) type = extracted.typeGuess || undefined;
         }
     }
 
