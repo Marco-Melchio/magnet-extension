@@ -16,8 +16,14 @@ def cors(resp):
     # Für dein LAN/Extension-Test: offen. Später besser mit Token + Origin einschränken.
     resp.headers["Access-Control-Allow-Origin"] = "*"
     resp.headers["Access-Control-Allow-Methods"] = "POST, OPTIONS, GET"
-    resp.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+    resp.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Auth-Token"
     return resp
+
+
+@app.after_request
+def add_cors_headers(resp):
+    """Sorge dafür, dass jede Antwort die CORS-Header enthält (auch Fehlerfälle)."""
+    return cors(resp)
 
 def sanitize_name(s: str) -> str:
     if not s:
