@@ -6,9 +6,9 @@ services:
       - "8787:8787"
     volumes:
       - ./data:/data
-      - /volume2/EmbyFiles:/media
+      - /volume2/EmbyFiles:/EmblyFiles
     environment:
-      - MOVIES_DIR=/media/Movies
-      - SERIES_DIR=/media/Series
+      - MOVIES_DIR=/EmblyFiles/Movies
+      - SERIES_DIR=/EmblyFiles/Series
       - QUEUE_FILE=/data/queue.jsonl
     restart: unless-stopped

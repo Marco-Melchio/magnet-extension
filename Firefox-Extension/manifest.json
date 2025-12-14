@@ -19,10 +19,7 @@
   },
   "content_scripts": [
     {
-      "matches": [
-        "*://1337x.to/torrent/*",
-        "*://*.1337x.to/torrent/*"
-      ],
+      "matches": ["<all_urls>"],
       "js": ["content.js"],
       "run_at": "document_idle"
     }
