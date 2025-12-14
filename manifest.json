@@ -1,0 +1,28 @@
+{
+  "manifest_version": 2,
+  "name": "NAS Magnet Helper",
+  "version": "1.0.0",
+  "description": "Liest Magnet-Link und Jahr von der aktuellen Seite aus und sendet sie mit einem Titel an ein NAS.",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "tabs",
+    "http://*/*",
+    "https://*/*"
+  ],
+  "browser_action": {
+    "default_title": "NAS Magnet Helper",
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content-script.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
