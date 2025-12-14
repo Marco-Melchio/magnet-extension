@@ -1,3 +1,34 @@
+const RECEIVER_URLS = ["http://192.168.0.220:8787/*"];
+
+function upsertHeader(headers, name, value) {
+  const existing = headers.find((h) => h.name.toLowerCase() === name.toLowerCase());
+  if (existing) {
+    existing.value = value;
+  } else {
+    headers.push({ name, value });
+  }
+  return headers;
+}
+
+function enableCorsForReceiver() {
+  try {
+    browser.webRequest.onHeadersReceived.addListener(
+      (details) => {
+        const headers = upsertHeader(details.responseHeaders || [], "Access-Control-Allow-Origin", "*");
+        upsertHeader(headers, "Access-Control-Allow-Headers", "*");
+        upsertHeader(headers, "Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+        return { responseHeaders: headers };
+      },
+      { urls: RECEIVER_URLS },
+      ["blocking", "responseHeaders"]
+    );
+  } catch (err) {
+    console.error("[Background] Konnte CORS-Header nicht setzen:", err);
+  }
+}
+
+enableCorsForReceiver();
+
 browser.runtime.onMessage.addListener((msg) => {
   if (msg.type !== "SEND_TO_NAS") return;
 
