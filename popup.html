@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="popup.css">
+  <title>NAS Magnet Helper</title>
+</head>
+<body>
+  <header>
+    <img src="icons/icon-48.png" alt="Icon" class="logo" />
+    <div>
+      <h1>NAS Magnet Helper</h1>
+      <p class="subtitle">Magnet-Link &amp; Jahr lesen, Titel setzen und ans NAS senden.</p>
+    </div>
+  </header>
+
+  <section class="field">
+    <label for="magnetLink">Magnet-Link</label>
+    <div class="row">
+      <input id="magnetLink" type="text" readonly aria-label="Magnet Link" />
+      <button id="refresh" type="button" title="Neu laden">&#x21bb;</button>
+    </div>
+  </section>
+
+  <section class="field">
+    <label for="year">Jahr</label>
+    <input id="year" type="text" readonly aria-label="Jahr" />
+  </section>
+
+  <section class="field">
+    <label for="title">Titel</label>
+    <input id="title" type="text" placeholder="Titel festlegen" aria-label="Titel" />
+  </section>
+
+  <section class="field">
+    <label for="nasUrl">NAS API URL</label>
+    <input id="nasUrl" type="text" aria-label="NAS URL" />
+    <p class="hint">z.B. http://nas.local:5000/api/magnet</p>
+  </section>
+
+  <div class="actions">
+    <button id="send" type="button">An NAS senden</button>
+    <span id="status" role="status"></span>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
