@@ -11,16 +11,6 @@ function setStatus(msg) {
     $("status").textContent = msg;
 }
 
-async function extractFromContent(tabId) {
-    try {
-        return await browser.tabs.sendMessage(tabId, { type: "EXTRACT" });
-    } catch (err) {
-        console.warn("[Popup] Konnte Content-Script nicht erreichen:", err);
-        setStatus("Content-Script nicht aktiv.");
-        return null;
-    }
-}
-
 async function getActiveTab() {
     const tabs = await browser.tabs.query({ active: true, currentWindow: true });
     return tabs[0];
@@ -63,7 +53,7 @@ function extractTitleAndYear(raw) {
 // ----------------------
 $("autofill").addEventListener("click", async () => {
     const tab = await getActiveTab();
-    const data = tab ? await extractFromContent(tab.id) : null;
+    const data = await browser.tabs.sendMessage(tab.id, { type: "EXTRACT" });
 
     if (!data) {
         setStatus("Keine Daten erhalten (Content-Script evtl. nicht aktiv).");
@@ -95,41 +85,15 @@ $("autofill").addEventListener("click", async () => {
 // Senden an Background
 // ----------------------
 $("send").addEventListener("click", async () => {
-    const tab = await getActiveTab();
-
-    let magnet = window.__LAST_MAGNET__ || null;
-    let pageUrl = tab?.url || null;
-    let title = $("title").value.trim();
-    let year = $("year").value.trim();
-    let type = $("type").value === "auto" ? undefined : $("type").value;
-
-    // Fallback: direkt zur Laufzeit aus dem Content-Script holen
-    if (!magnet || !title || !year || !type) {
-        const extracted = tab ? await extractFromContent(tab.id) : null;
-        if (extracted) {
-            magnet = magnet || extracted.magnet || null;
-            pageUrl = pageUrl || extracted.pageUrl || null;
-            if (!title) title = extracted.title || "";
-            if (!year) year = extracted.year || "";
-            if (!type) type = extracted.typeGuess || undefined;
-        }
-    }
-
     const payload = {
-        title,
-        year,
-        type,
+        title: $("title").value.trim(),
+        year: $("year").value.trim(),
+        type: $("type").value === "auto" ? undefined : $("type").value,
         receiverUrl: $("receiver").value.trim(),
         token: $("token").value.trim(),
-        magnet,
-        pageUrl
+        magnet: window.__LAST_MAGNET__ || null,
+        pageUrl: null
     };
-
-    if (!payload.magnet) {
-        setStatus("Kein Magnet-Link gefunden.");
-        console.warn("[Popup] Abbruch: kein Magnet-Link im Payload", payload);
-        return;
-    }
 
     console.log("[Popup] Sende Payload:", payload);
 
