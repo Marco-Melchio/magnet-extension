@@ -7,7 +7,9 @@
     "activeTab",
     "tabs",
     "storage",
-    "http://192.168.0.220:8787/*"
+    "http://192.168.0.220:8787/*",
+    "webRequest",
+    "webRequestBlocking"
   ],
   "browser_action": {
     "default_title": "Media Sender",
