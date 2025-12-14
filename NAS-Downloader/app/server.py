@@ -7,8 +7,8 @@ from flask import Flask, request, jsonify, make_response
 
 app = Flask(__name__)
 
-MOVIES_DIR = os.environ.get("MOVIES_DIR", "/media/Movies")
-SERIES_DIR = os.environ.get("SERIES_DIR", "/media/Series")
+MOVIES_DIR = os.environ.get("MOVIES_DIR", "/EmblyFiles/Movies")
+SERIES_DIR = os.environ.get("SERIES_DIR", "/EmblyFiles/Series")
 QUEUE_FILE = os.environ.get("QUEUE_FILE", "/data/queue.jsonl")
 ARIA2C_BIN = os.environ.get("ARIA2C_BIN", "aria2c")
 
@@ -131,7 +131,8 @@ def intake():
 
     return cors(make_response(jsonify({
         "ok": True,
-        "createdFolder": folder_path
+        "createdFolder": folder_path,
+        "message": "Download gestartet"
     }), 200))
 
 @app.route("/health", methods=["GET"])

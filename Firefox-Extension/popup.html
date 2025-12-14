@@ -3,47 +3,142 @@
 <head>
   <meta charset="utf-8" />
   <style>
-    body { font-family: system-ui, sans-serif; padding: 10px; width: 320px; }
-    label { display:block; margin-top:8px; font-size: 12px; opacity: .85; }
-    input, select { width: 100%; padding: 6px; margin-top: 4px; }
-    button { margin-top: 10px; padding: 8px 10px; width: 100%; }
-    .row { display:flex; gap:8px; }
+    :root {
+      --bg: #0f172a;
+      --card: #111827;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --accent: #10b981;
+      --danger: #ef4444;
+      --border: #1f2937;
+    }
+    body {
+      font-family: "Inter", system-ui, -apple-system, sans-serif;
+      padding: 12px;
+      width: 360px;
+      background: radial-gradient(circle at 20% 20%, #111827 0%, #0b1221 35%, #050913 100%);
+      color: var(--text);
+    }
+    h1 {
+      font-size: 16px;
+      margin: 0 0 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      letter-spacing: 0.3px;
+    }
+    h1 span.logo {
+      background: linear-gradient(135deg, #22c55e, #14b8a6);
+      color: #0b0f1a;
+      padding: 6px 10px;
+      border-radius: 10px;
+      font-weight: 700;
+      box-shadow: 0 6px 25px rgba(34, 197, 94, 0.35);
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.35);
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: 0.2px;
+    }
+    input, select {
+      width: 100%;
+      padding: 9px 10px;
+      margin-top: 6px;
+      background: #0b1221;
+      color: var(--text);
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      outline: none;
+      transition: border-color .15s ease, box-shadow .15s ease;
+    }
+    input:focus, select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.25);
+    }
+    button {
+      padding: 10px 12px;
+      width: 100%;
+      border-radius: 10px;
+      border: none;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      cursor: pointer;
+      transition: transform .08s ease, box-shadow .15s ease;
+    }
+    button:hover { transform: translateY(-1px); }
+    button:active { transform: translateY(0); }
+    .primary { background: linear-gradient(135deg, #22c55e, #14b8a6); color: #0b0f1a; box-shadow: 0 12px 30px rgba(34, 197, 94, 0.28); }
+    .secondary { background: #1f2937; color: var(--text); border: 1px solid var(--border); }
+    .row { display:flex; gap:10px; }
     .row > div { flex:1; }
-    #status { margin-top: 8px; font-size: 12px; }
-    code { word-break: break-all; }
+    #status { margin-top: 10px; font-size: 12px; color: var(--muted); min-height: 18px; }
+    #status.ok { color: var(--accent); }
+    #status.error { color: var(--danger); }
+    .hint { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .pill {
+      background: rgba(16, 185, 129, 0.12);
+      color: var(--text);
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      font-size: 12px;
+      word-break: break-all;
+      margin-top: 8px;
+    }
+    .pill strong { color: var(--accent); }
   </style>
 </head>
 <body>
-  <div class="row">
-    <div><button id="autofill">Auto-Fill</button></div>
-    <div><button id="send">Senden</button></div>
+  <h1><span class="logo">Magnet Drop</span> NAS Sender</h1>
+  <div class="card">
+    <div class="row">
+      <div><button class="secondary" id="autofill">Auto-Fill</button></div>
+      <div><button class="primary" id="send">Senden</button></div>
+    </div>
+
+    <label>Name / Titel</label>
+    <input id="title" placeholder="z.B. Beispiel-Film" />
+    <div class="hint">Wird für den Ordnernamen verwendet.</div>
+
+    <div class="row">
+      <div>
+        <label>Jahr</label>
+        <input id="year" placeholder="2025" />
+      </div>
+      <div>
+        <label>Typ</label>
+        <select id="type">
+          <option value="auto">Auto</option>
+          <option value="movie">Movie</option>
+          <option value="series">Series</option>
+        </select>
+      </div>
+    </div>
+
+    <label>Receiver URL</label>
+    <input id="receiver" type="text" value="http://192.168.0.220:8787/intake" placeholder="http://NAS-IP:8787/intake" />
+    <div class="hint">Dein NAS-Endpunkt, der den Download startet.</div>
+
+    <label>Token</label>
+    <input id="token" value="N4UsUj8SaYHadGkc4yaqecwnbNHanNh74bmLXLTNWeps8KFx3a" />
+    <div class="hint">Optionaler Auth-Token für dein NAS.</div>
+
+    <div class="pill" id="magnetPreview" hidden>
+      <strong>Magnet:</strong> <span id="magnetValue"></span>
+    </div>
+
+    <div id="status"></div>
   </div>
 
-  <label>Titel</label>
-  <input id="title" placeholder="z.B. Example Movie" />
-
-  <div class="row">
-    <div>
-      <label>Jahr</label>
-      <input id="year" placeholder="2025" />
-    </div>
-    <div>
-      <label>Typ</label>
-      <select id="type">
-        <option value="auto">Auto</option>
-        <option value="movie">Movie</option>
-        <option value="series">Series</option>
-      </select>
-    </div>
-  </div>
-
-  <label>Receiver URL</label>
-  <input id="receiver" type="text" value="http://192.168.0.220:8787/intake" placeholder="http://NAS-IP:8787/intake" />
-
-  <label>Token</label>
-  <input id="token" value="N4UsUj8SaYHadGkc4yaqecwnbNHanNh74bmLXLTNWeps8KFx3a" />
-
-  <div id="status"></div>
   <script src="popup.js"></script>
 </body>
 </html>
