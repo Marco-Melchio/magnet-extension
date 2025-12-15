@@ -1,5 +1,5 @@
 const extensionApi = typeof browser !== 'undefined' ? browser : chrome;
-const DEFAULT_NAS_URL = 'http://nas.local:5000/api/magnet';
+const DEFAULT_NAS_URL = 'http://nas-frey:5050/api/magnet';
 
 function getStoredNasUrl() {
   return new Promise((resolve) => {
@@ -29,7 +29,9 @@ async function sendToNas({ magnetLink, title, year, nasUrl }) {
 
   const response = await fetch(url, {
     method: 'POST',
+    
     headers: {
+      'Authorization': 'a9F3kL2M0s8xQeVbC7D5PZJYwE6R4t1U',
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(payload)
