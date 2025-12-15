@@ -139,7 +139,7 @@ h1 {
 }
 
 .field {
-  margin: 16px 0;
+  margin-top: 10px;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -213,8 +213,8 @@ button:active {
 
 button#refresh,
 button.ghost {
-  min-width: 46px;
-  padding: 11px 12px;
+  min-width: 50px;
+  padding: 10px 10px;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--border);
@@ -233,7 +233,7 @@ button.ghost:hover {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-top: 12px;
+  margin-top: 20px;
 }
 
 .status-chip {

@@ -66,7 +66,7 @@ async function collectData() {
   return new Promise((resolve) => {
     extensionApi.tabs.sendMessage(tab.id, { type: 'collectData' }, (response) => {
       if (!response) {
-        setStatus('Keine Daten gefunden');
+        setStatus('Keine Daten');
         resolve(null);
         return;
       }
