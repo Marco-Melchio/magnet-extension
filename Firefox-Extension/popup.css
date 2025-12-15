@@ -18,7 +18,7 @@
 body {
   font-family: "Inter", "Orbitron", system-ui, -apple-system, sans-serif;
   margin: 0;
-  padding: 20px;
+  padding: 0;
   width: 400px;
   min-height: 100vh;
   background: var(--bg);

@@ -66,7 +66,7 @@ async function collectData() {
   return new Promise((resolve) => {
     extensionApi.tabs.sendMessage(tab.id, { type: 'collectData' }, (response) => {
       if (!response) {
-        setStatus('Inaktiv', 'inactive');
+        setStatus('Inactive', 'inactive');
         resolve(null);
         return;
       }
@@ -82,16 +82,16 @@ async function collectData() {
 
 async function sendToNas() {
   const magnetLink = magnetInput.value.trim();
-  const title = titleInput.value.trim() || 'Unbenannt';
+  const title = titleInput.value.trim() || 'Untitled';
   const year = yearInput.value.trim();
   const nasUrl = nasUrlInput.value.trim();
 
   if (!magnetLink) {
-    setStatus('Kein Magnet-Link gefunden.', 'error');
+    setStatus('No magnet link found.', 'error');
     return;
   }
   if (!nasUrl) {
-    setStatus('Bitte NAS API URL angeben.', 'error');
+    setStatus('Please provide the NAS API URL.', 'error');
     return;
   }
 
@@ -105,14 +105,14 @@ async function sendToNas() {
     },
     (response) => {
       if (!response) {
-        setStatus('Keine Antwort vom Hintergrundskript.', 'error');
+        setStatus('No response from the background script.', 'error');
         return;
       }
 
       if (response.ok) {
         setStatus('Done', 'done');
       } else {
-        setStatus(response.error || 'Fehler beim Senden.', 'error');
+        setStatus(response.error || 'Error while sending.', 'error');
       }
     }
   );
