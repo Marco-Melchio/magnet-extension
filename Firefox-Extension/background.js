@@ -26,7 +26,7 @@ async function sendToNas({ magnetLink, title, year, nasUrl }) {
     magnet: magnetLink,
     title: targetTitle,
     year: normalizedYear,
-    folder: `/EmblyFiles/Movies/${folderName}`
+    folder: folderName
   };
 
   const response = await fetch(url, {
