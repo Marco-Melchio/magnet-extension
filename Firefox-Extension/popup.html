@@ -17,7 +17,7 @@
           <img src="icons/icon-48.png" alt="Icon" class="logo ringed" />
           <div>
             <h1>NAS Magnet Helper</h1>
-            <p class="subtitle">Cybernetic Magnet-Link Kommandozentrale.</p>
+            <p class="subtitle">Magnet-link picker for torrent sides Downloader not inkluded</p>
           </div>
         </div>
       </div>
@@ -26,7 +26,7 @@
     <section class="field">
       <label for="magnetLink">Magnet-Link</label>
       <div class="row">
-        <input id="magnetLink" type="text" aria-label="Magnet Link" />
+        <input id="magnetLink" type="text" placeholder="Link eingeben" aria-label="Magnet Link" />
         <button id="refresh" type="button" title="Neu laden" class="ghost">&#x21bb;</button>
       </div>
     </section>
@@ -34,7 +34,7 @@
     <section class="field duo">
       <div>
         <label for="year">Jahr</label>
-        <input id="year" type="text" aria-label="Jahr" />
+        <input id="year" type="text" placeholder="Jahr festlegen" aria-label="Jahr" />
       </div>
       <div>
         <label for="title">Titel</label>
@@ -44,14 +44,12 @@
 
     <section class="field">
       <label for="nasUrl">NAS API URL</label>
-      <input id="nasUrl" type="text" aria-label="NAS URL" value="http://nas-frey:5050/api/magnet" />
-      <p class="hint">z.B. http://nas.local:5000/api/magnet</p>
+      <input id="nasUrl" type="text" aria-label="NAS URL" placeholder="z.B. http://nas.local:5000/api/magnet" value="http://192.168.0.220:5050/api/magnet" />
     </section>
 
     <div class="actions">
       <div>
-        <button id="send" type="button">An NAS senden</button>
-        <p class="small-muted">Turbo-Link zu deinem NAS Service</p>
+        <button id="send" type="button">Senden</button>
       </div>
       <span id="status" class="status-chip" role="status" aria-live="polite"></span>
     </div>
