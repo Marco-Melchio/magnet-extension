@@ -7,41 +7,57 @@
   <title>NAS Magnet Helper</title>
 </head>
 <body>
-  <header>
-    <img src="icons/icon-48.png" alt="Icon" class="logo" />
-    <div>
-      <h1>NAS Magnet Helper</h1>
-      <p class="subtitle">Magnet-Link &amp; Jahr lesen, Titel setzen und ans NAS senden.</p>
+  <div class="gradient-bg"></div>
+  <div class="card">
+    <header>
+      <div class="badge">V2</div>
+      <div class="title-wrap">
+        <div class="title-row">
+          <img src="icons/icon-48.png" alt="Icon" class="logo" />
+          <div>
+            <h1>NAS Magnet Helper</h1>
+            <p class="subtitle">Magnet-Link &amp; Jahr lesen, Titel setzen und ans NAS senden.</p>
+          </div>
+        </div>
+        <p class="small-muted">Optimiert für schnelle Downloads · Modernes UI</p>
+      </div>
+    </header>
+
+    <section class="field">
+      <div class="label-row">
+        <label for="magnetLink">Magnet-Link</label>
+        <span class="tag">Read-only</span>
+      </div>
+      <div class="row">
+        <input id="magnetLink" type="text" readonly aria-label="Magnet Link" />
+        <button id="refresh" type="button" title="Neu laden" class="ghost">&#x21bb;</button>
+      </div>
+    </section>
+
+    <section class="field duo">
+      <div>
+        <label for="year">Jahr</label>
+        <input id="year" type="text" readonly aria-label="Jahr" />
+      </div>
+      <div>
+        <label for="title">Titel</label>
+        <input id="title" type="text" placeholder="Titel festlegen" aria-label="Titel" />
+      </div>
+    </section>
+
+    <section class="field">
+      <label for="nasUrl">NAS API URL</label>
+      <input id="nasUrl" type="text" aria-label="NAS URL" value="http://nas-frey:5050/api/magnet" />
+      <p class="hint">z.B. http://nas.local:5000/api/magnet</p>
+    </section>
+
+    <div class="actions">
+      <div>
+        <button id="send" type="button">An NAS senden</button>
+        <p class="small-muted">Erfordert laufenden NAS-Service</p>
+      </div>
+      <span id="status" role="status"></span>
     </div>
-  </header>
-
-  <section class="field">
-    <label for="magnetLink">Magnet-Link</label>
-    <div class="row">
-      <input id="magnetLink" type="text" readonly aria-label="Magnet Link" />
-      <button id="refresh" type="button" title="Neu laden">&#x21bb;</button>
-    </div>
-  </section>
-
-  <section class="field">
-    <label for="year">Jahr</label>
-    <input id="year" type="text" readonly aria-label="Jahr" />
-  </section>
-
-  <section class="field">
-    <label for="title">Titel</label>
-    <input id="title" type="text" placeholder="Titel festlegen" aria-label="Titel" />
-  </section>
-
-  <section class="field">
-    <label for="nasUrl">NAS API URL</label>
-    <input id="nasUrl" type="text" aria-label="NAS URL" value="http://nas-frey:5050/api/magnet" />
-    <p class="hint">z.B. http://nas.local:5000/api/magnet</p>
-  </section>
-
-  <div class="actions">
-    <button id="send" type="button">An NAS senden</button>
-    <span id="status" role="status"></span>
   </div>
 
   <script src="popup.js"></script>
