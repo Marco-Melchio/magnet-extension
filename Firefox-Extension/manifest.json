@@ -10,13 +10,13 @@
     "http://*/*",
     "https://*/*"
   ],
-  "data_collection_permissions": {
-    "collects": false
-  },
   "browser_specific_settings": {
     "gecko": {
       "id": "FireFox-Extension-v2@melchio",
-      "strict_min_version": "120.0"
+      "strict_min_version": "120.0",
+      "data_collection_permissions": {
+        "collects": false
+      }
     }
   },
   "browser_action": {
