@@ -29,8 +29,10 @@
       <label for="magnetLink">Magnet link</label>
       <div class="input-row">
         <input id="magnetLink" type="text" placeholder="Enter link" aria-label="Magnet link" />
-        <button id="refresh" type="button" title="Reload" class="ghost" aria-label="Reload">¨
-          <img src="icons/reload.gif"/></button>
+        <button id="refresh" type="button" title="Reload" class="ghost refresh-button" aria-label="Reload">
+          <span class="refresh-static" aria-hidden="true"></span>
+          <img id="refreshGif" class="refresh-gif" data-src="icons/reload.gif" alt="" aria-hidden="true" />
+        </button>
       </div>
     </section>
 
