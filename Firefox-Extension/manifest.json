@@ -15,7 +15,7 @@
       "id": "FireFox-Extension-v2@melchio",
       "strict_min_version": "120.0",
       "data_collection_permissions": {
-        "collects": false
+        "required": ["none"]
       }
     }
   },
