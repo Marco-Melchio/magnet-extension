@@ -53,9 +53,11 @@
         <button id="send" type="button">An NAS senden</button>
         <p class="small-muted">Turbo-Link zu deinem NAS Service</p>
       </div>
-      <span id="status" role="status"></span>
+      <span id="status" class="status-chip" role="status" aria-live="polite"></span>
     </div>
   </div>
+
+  <div id="toast" class="toast" role="alert" aria-live="assertive"></div>
 
   <script src="popup.js"></script>
 </body>
