@@ -1,7 +1,10 @@
 const extensionApi = typeof browser !== 'undefined' ? browser : chrome;
+const DEFAULT_NAS_URL = 'http://nas.local:5050/api/magnet';
+const DEFAULT_NAS_TOKEN = 'change-me';
+
 function getStoredNasUrl() {
   return new Promise((resolve) => {
-    extensionApi.storage.sync.get({ nasUrl: '' }, (items) => {
+    extensionApi.storage.sync.get({ nasUrl: DEFAULT_NAS_URL }, (items) => {
       resolve(items.nasUrl || '');
     });
   });
@@ -13,8 +16,28 @@ function setStoredNasUrl(url) {
   });
 }
 
-async function sendToNas({ magnetLink, title, year, nasUrl }) {
+function getStoredNasToken() {
+  return new Promise((resolve) => {
+    extensionApi.storage.sync.get({ nasToken: DEFAULT_NAS_TOKEN }, (items) => {
+      resolve(items.nasToken || '');
+    });
+  });
+}
+
+function setStoredNasToken(token) {
+  return new Promise((resolve) => {
+    extensionApi.storage.sync.set({ nasToken: token }, () => resolve(token));
+  });
+}
+
+async function getStoredNasSettings() {
+  const [nasUrl, nasToken] = await Promise.all([getStoredNasUrl(), getStoredNasToken()]);
+  return { nasUrl, nasToken };
+}
+
+async function sendToNas({ magnetLink, title, year, nasUrl, nasToken }) {
   const url = nasUrl || (await getStoredNasUrl());
+  const token = nasToken || (await getStoredNasToken());
 
   if (!url) {
     throw new Error('NAS API URL is missing.');
@@ -32,12 +55,17 @@ async function sendToNas({ magnetLink, title, year, nasUrl }) {
     folder: folderName
   };
 
+  const headers = {
+    'Content-Type': 'application/json'
+  };
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
   const response = await fetch(url, {
     method: 'POST',
-
-    headers: {
-      'Content-Type': 'application/json'
-    },
+    headers,
     body: JSON.stringify(payload)
   });
 
@@ -68,8 +96,23 @@ extensionApi.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true;
   }
 
+  if (message.type === 'saveNasToken') {
+    setStoredNasToken(message.token).then(() => sendResponse({ ok: true }));
+    return true;
+  }
+
   if (message.type === 'getNasUrl') {
     getStoredNasUrl().then((nasUrl) => sendResponse({ ok: true, nasUrl }));
+    return true;
+  }
+
+  if (message.type === 'getNasToken') {
+    getStoredNasToken().then((nasToken) => sendResponse({ ok: true, nasToken }));
+    return true;
+  }
+
+  if (message.type === 'getNasSettings') {
+    getStoredNasSettings().then(({ nasUrl, nasToken }) => sendResponse({ ok: true, nasUrl, nasToken }));
     return true;
   }
 
