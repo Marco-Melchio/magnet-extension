@@ -4,6 +4,7 @@ const magnetInput = document.getElementById('magnetLink');
 const yearInput = document.getElementById('year');
 const titleInput = document.getElementById('title');
 const nasUrlInput = document.getElementById('nasUrl');
+const nasTokenInput = document.getElementById('nasToken');
 const statusEl = document.getElementById('status');
 const toastEl = document.getElementById('toast');
 const refreshBtn = document.getElementById('refresh');
@@ -43,14 +44,15 @@ async function getActiveTab() {
   return tabs[0];
 }
 
-async function loadNasUrl() {
+async function loadNasSettings() {
   return new Promise((resolve) => {
-    extensionApi.runtime.sendMessage({ type: 'getNasUrl' }, (response) => {
+    extensionApi.runtime.sendMessage({ type: 'getNasSettings' }, (response) => {
       if (response && response.ok) {
         nasUrlInput.value = response.nasUrl || '';
-        resolve(response.nasUrl || '');
+        nasTokenInput.value = response.nasToken || '';
+        resolve(response);
       } else {
-        resolve('');
+        resolve({ nasUrl: '', nasToken: '' });
       }
     });
   });
@@ -58,6 +60,18 @@ async function loadNasUrl() {
 
 function saveNasUrl(value) {
   extensionApi.runtime.sendMessage({ type: 'saveNasUrl', url: value });
+}
+
+function saveNasToken(value) {
+  extensionApi.runtime.sendMessage({ type: 'saveNasToken', token: value });
+}
+
+function debounce(fn, delay = 300) {
+  let timeoutId;
+  return (...args) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => fn(...args), delay);
+  };
 }
 
 async function collectData() {
@@ -86,6 +100,7 @@ async function sendToNas() {
   const title = titleInput.value.trim() || 'Untitled';
   const year = yearInput.value.trim();
   const nasUrl = nasUrlInput.value.trim();
+  const nasToken = nasTokenInput.value.trim();
 
   if (!magnetLink) {
     setStatus('No magnet link found.', 'error');
@@ -98,11 +113,12 @@ async function sendToNas() {
 
   setStatus('Sending', 'sending');
   saveNasUrl(nasUrl);
+  saveNasToken(nasToken);
 
   extensionApi.runtime.sendMessage(
     {
       type: 'sendToNAS',
-      payload: { magnetLink, title, year, nasUrl }
+      payload: { magnetLink, title, year, nasUrl, nasToken }
     },
     (response) => {
       if (!response) {
@@ -121,10 +137,14 @@ async function sendToNas() {
 
 refreshBtn.addEventListener('click', collectData);
 sendBtn.addEventListener('click', sendToNas);
-nasUrlInput.addEventListener('change', (event) => saveNasUrl(event.target.value));
+const debouncedSaveNasUrl = debounce((value) => saveNasUrl(value));
+const debouncedSaveNasToken = debounce((value) => saveNasToken(value));
+
+nasUrlInput.addEventListener('input', (event) => debouncedSaveNasUrl(event.target.value));
+nasTokenInput.addEventListener('input', (event) => debouncedSaveNasToken(event.target.value));
 
 document.addEventListener('DOMContentLoaded', async () => {
-  await loadNasUrl();
+  await loadNasSettings();
   await collectData();
 });
 
