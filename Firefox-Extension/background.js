@@ -18,20 +18,22 @@ function setStoredNasUrl(url) {
 async function sendToNas({ magnetLink, title, year, nasUrl }) {
   const url = nasUrl || (await getStoredNasUrl());
   const targetTitle = title || 'Unbenannt';
-  const folderName = year ? `${targetTitle} (${year})` : targetTitle;
+  const parsedYear = Number.parseInt(year, 10);
+  const normalizedYear = Number.isFinite(parsedYear) ? parsedYear : undefined;
+  const folderName = normalizedYear ? `${targetTitle} (${normalizedYear})` : targetTitle;
 
   const payload = {
-    magnetLink,
+    magnet: magnetLink,
     title: targetTitle,
-    year: year || '',
-    targetFolder: `/EmblyFiles/Movies/${folderName}`
+    year: normalizedYear,
+    folder: `/EmblyFiles/Movies/${folderName}`
   };
 
   const response = await fetch(url, {
     method: 'POST',
     
     headers: {
-      'Authorization': 'a9F3kL2M0s8xQeVbC7D5PZJYwE6R4t1U',
+      'Authorization': 'Bearer a9F3kL2M0s8xQeVbC7D5PZJYwE6R4t1U',
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(payload)
