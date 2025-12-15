@@ -5,12 +5,36 @@ const yearInput = document.getElementById('year');
 const titleInput = document.getElementById('title');
 const nasUrlInput = document.getElementById('nasUrl');
 const statusEl = document.getElementById('status');
+const toastEl = document.getElementById('toast');
 const refreshBtn = document.getElementById('refresh');
 const sendBtn = document.getElementById('send');
 
-function setStatus(message, isError = false) {
+let toastTimeout;
+
+function setStatus(message, state = 'ready') {
   statusEl.textContent = message;
-  statusEl.classList.toggle('error', isError);
+  statusEl.className = `status-chip status-${state}`;
+
+  if (state === 'error') {
+    showToast(message);
+  } else {
+    hideToast();
+  }
+}
+
+function showToast(message) {
+  toastEl.textContent = message;
+  toastEl.classList.add('show');
+
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => {
+    toastEl.classList.remove('show');
+  }, 3000);
+}
+
+function hideToast() {
+  toastEl.classList.remove('show');
+  clearTimeout(toastTimeout);
 }
 
 async function getActiveTab() {
@@ -36,13 +60,13 @@ function saveNasUrl(value) {
 }
 
 async function collectData() {
-  setStatus('Lese Daten aus der Seite...');
+  setStatus('Searching...', 'searching');
   const tab = await getActiveTab();
 
   return new Promise((resolve) => {
     extensionApi.tabs.sendMessage(tab.id, { type: 'collectData' }, (response) => {
       if (!response) {
-        setStatus('Keine Daten gefunden. Versuche es nach dem Laden der Seite erneut.', true);
+        setStatus('Keine Daten gefunden. Versuche es nach dem Laden der Seite erneut.', 'error');
         resolve(null);
         return;
       }
@@ -50,7 +74,7 @@ async function collectData() {
       magnetInput.value = response.magnetLink || '';
       yearInput.value = response.year || '';
       titleInput.value = response.title || '';
-      setStatus('Bereit');
+      setStatus('Ready', 'ready');
       resolve(response);
     });
   });
@@ -63,15 +87,15 @@ async function sendToNas() {
   const nasUrl = nasUrlInput.value.trim();
 
   if (!magnetLink) {
-    setStatus('Kein Magnet-Link gefunden.', true);
+    setStatus('Kein Magnet-Link gefunden.', 'error');
     return;
   }
   if (!nasUrl) {
-    setStatus('Bitte NAS API URL angeben.', true);
+    setStatus('Bitte NAS API URL angeben.', 'error');
     return;
   }
 
-  setStatus('Sende an NAS...');
+  setStatus('Loading...', 'loading');
   saveNasUrl(nasUrl);
 
   extensionApi.runtime.sendMessage(
@@ -81,14 +105,14 @@ async function sendToNas() {
     },
     (response) => {
       if (!response) {
-        setStatus('Keine Antwort vom Hintergrundskript.', true);
+        setStatus('Keine Antwort vom Hintergrundskript.', 'error');
         return;
       }
 
       if (response.ok) {
-        setStatus('Erfolgreich gesendet.');
+        setStatus('Bereit', 'ready');
       } else {
-        setStatus(response.error || 'Fehler beim Senden.', true);
+        setStatus(response.error || 'Fehler beim Senden.', 'error');
       }
     }
   );
