@@ -60,13 +60,13 @@ function saveNasUrl(value) {
 }
 
 async function collectData() {
-  setStatus('Searching...', 'searching');
+  setStatus('Searching', 'searching');
   const tab = await getActiveTab();
 
   return new Promise((resolve) => {
     extensionApi.tabs.sendMessage(tab.id, { type: 'collectData' }, (response) => {
       if (!response) {
-        setStatus('Keine Daten');
+        setStatus('Inaktiv', 'inactive');
         resolve(null);
         return;
       }
@@ -95,7 +95,7 @@ async function sendToNas() {
     return;
   }
 
-  setStatus('Loading...', 'loading');
+  setStatus('Sending', 'sending');
   saveNasUrl(nasUrl);
 
   extensionApi.runtime.sendMessage(
@@ -110,7 +110,7 @@ async function sendToNas() {
       }
 
       if (response.ok) {
-        setStatus('Bereit', 'ready');
+        setStatus('Done', 'done');
       } else {
         setStatus(response.error || 'Fehler beim Senden.', 'error');
       }
