@@ -1,10 +1,8 @@
 const extensionApi = typeof browser !== 'undefined' ? browser : chrome;
-const DEFAULT_NAS_URL = 'http://nas-frey:5050/api/magnet';
-
 function getStoredNasUrl() {
   return new Promise((resolve) => {
-    extensionApi.storage.sync.get({ nasUrl: DEFAULT_NAS_URL }, (items) => {
-      resolve(items.nasUrl || DEFAULT_NAS_URL);
+    extensionApi.storage.sync.get({ nasUrl: '' }, (items) => {
+      resolve(items.nasUrl || '');
     });
   });
 }
@@ -17,7 +15,12 @@ function setStoredNasUrl(url) {
 
 async function sendToNas({ magnetLink, title, year, nasUrl }) {
   const url = nasUrl || (await getStoredNasUrl());
-  const targetTitle = title || 'Unbenannt';
+
+  if (!url) {
+    throw new Error('NAS API URL is missing.');
+  }
+
+  const targetTitle = title || 'Untitled';
   const parsedYear = Number.parseInt(year, 10);
   const normalizedYear = Number.isFinite(parsedYear) ? parsedYear : undefined;
   const folderName = normalizedYear ? `${targetTitle} (${normalizedYear})` : targetTitle;
@@ -31,9 +34,8 @@ async function sendToNas({ magnetLink, title, year, nasUrl }) {
 
   const response = await fetch(url, {
     method: 'POST',
-    
+
     headers: {
-      'Authorization': 'Bearer a9F3kL2M0s8xQeVbC7D5PZJYwE6R4t1U',
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(payload)
@@ -41,13 +43,13 @@ async function sendToNas({ magnetLink, title, year, nasUrl }) {
 
   const text = await response.text();
   if (!response.ok) {
-    throw new Error(`NAS Antwort ${response.status}: ${text || 'unbekannter Fehler'}`);
+    throw new Error(`NAS response ${response.status}: ${text || 'unknown error'}`);
   }
 
   try {
     return JSON.parse(text);
   } catch (error) {
-    return { message: text || 'Anfrage erfolgreich' };
+    return { message: text || 'Request succeeded' };
   }
 }
 
