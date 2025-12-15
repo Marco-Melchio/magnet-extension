@@ -16,10 +16,10 @@
     <header>
       <div class="title-wrap">
         <div class="title-row">
-          <img src="icons/icon-48.png" alt="Icon" class="logo ringed" />
+          <img src="icons/magnet.gif" alt="Icon" class="logo ringed" />
           <div>
             <h1>MagnetCatcher</h1>
-            <p class="subtitle">Magnet-link picker for torrent sites. Downloader not included.</p>
+            <p class="subtitle">Magnet-link picker for torrent sites. <br> Downloader not included.</p>
           </div>
         </div>
       </div>
@@ -29,7 +29,8 @@
       <label for="magnetLink">Magnet link</label>
       <div class="input-row">
         <input id="magnetLink" type="text" placeholder="Enter link" aria-label="Magnet link" />
-        <button id="refresh" type="button" title="Reload" class="ghost">&#x21bb;</button>
+        <button id="refresh" type="button" title="Reload" class="ghost" aria-label="Reload">¨
+          <img src="icons/reload.gif"/></button>
       </div>
     </section>
 
@@ -44,8 +45,8 @@
     </section>
 
     <section class="field">
-      <label for="nasUrl">NAS API URL</label>
-      <input id="nasUrl" type="text" aria-label="NAS URL" placeholder="e.g. http://nas.local:5000/api/magnet"/>
+      <label for="nasUrl">API URL</label>
+      <input id="nasUrl" type="text" aria-label="NAS URL" placeholder="e.g. http://nas.local:5050/api/magnet"/>
     </section>
 
     <div class="actions">
