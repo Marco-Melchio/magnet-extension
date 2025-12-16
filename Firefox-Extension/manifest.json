@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "MagnetCatcher",
-  "version": "1.0.4",
+  "version": "1.0.6",
   "description": "A Firefox extension to catch magnet links and send them to your NAS download station.",
   "permissions": [
     "activeTab",
