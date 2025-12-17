@@ -1,5 +1,5 @@
 const extensionApi = typeof browser !== 'undefined' ? browser : chrome;
-const DEFAULT_NAS_URL = 'http://nas-frey:5050/api/magnet';
+const DEFAULT_NAS_URL = 'https://magnet.melchio.ch/api/magnet';
 const DEFAULT_NAS_TOKEN = 'a9F3kL2M0s8xQeVbC7D5PZJYwE6R4t1U';
 
 function getStoredNasUrl() {
