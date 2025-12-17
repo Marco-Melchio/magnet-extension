@@ -8,7 +8,6 @@ const nasTokenInput = document.getElementById('nasToken');
 const statusEl = document.getElementById('status');
 const toastEl = document.getElementById('toast');
 const refreshBtn = document.getElementById('refresh');
-const refreshGif = document.getElementById('refreshGif');
 const sendBtn = document.getElementById('send');
 
 let toastTimeout;
@@ -149,18 +148,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 function startRefreshAnimation() {
-  if (!refreshGif) return;
-  if (!refreshGif.src) {
-    refreshGif.src = refreshGif.dataset.src;
-  }
   refreshBtn.classList.add('playing');
 }
 
 function stopRefreshAnimation() {
   refreshBtn.classList.remove('playing');
-  if (refreshGif) {
-    refreshGif.removeAttribute('src');
-  }
 }
 
 refreshBtn.addEventListener('mouseenter', startRefreshAnimation);
