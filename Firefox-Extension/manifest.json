@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
-  "name": "MagnetCatcher",
-  "version": "1.0.6",
-  "description": "A Firefox extension to catch magnet links and send them to your NAS download station.",
+  "name": "MagnetCatcher V1",
+  "version": "1.0.0",
+  "description": "A Firefox extension to catch movie magnet links and send them to your NAS download station.",
   "permissions": [
     "activeTab",
     "storage",
@@ -12,7 +12,7 @@
   ],
   "browser_specific_settings": {
     "gecko": {
-      "id": "firefox-extension@melchio",
+      "id": "magnetcatcher-v1@melchio",
       "strict_min_version": "146.0",
       "data_collection_permissions": {
         "required": ["none"]
@@ -23,11 +23,11 @@
     "default_title": "NAS Magnet Helper",
     "default_popup": "popup.html",
     "default_icon": {
-      "48": "icons/magnet.png"
+      "48": "icons/MagnetCatcher48.png"
     }
   },
   "icons": {
-    "48": "icons/magnet.png"
+    "48": "icons/MagnetCatcher48.png"
   },
   "background": {
     "scripts": [
