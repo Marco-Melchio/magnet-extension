@@ -40,16 +40,18 @@
       <input id="title" type="text" placeholder="Set a title" aria-label="Title" />
     </section>
 
-    <section class="field">
-      <label for="year">Year</label>
-      <input id="year" type="text" placeholder="Set a year" aria-label="Year" />
-    </section>
+    <section class="field dual-field">
+      <div class="field-block">
+        <label for="year">Year</label>
+        <input id="year" type="text" placeholder="Set a year" aria-label="Year" />
+      </div>
 
-    <section class="field">
-      <label for="category">Category</label>
-      <div class="pill-select" role="group" aria-label="Category">
-        <button type="button" class="pill active" data-category="Movies">Movies</button>
-        <button type="button" class="pill" data-category="AnimeMovies">Anime Movies</button>
+      <div class="field-block">
+        <label for="category">Category</label>
+        <div class="pill-select" role="group" aria-label="Category">
+          <button type="button" class="pill active" data-category="Movies">Movies</button>
+          <button type="button" class="pill" data-category="AnimeMovies">Anime Movies</button>
+        </div>
       </div>
     </section>
 
