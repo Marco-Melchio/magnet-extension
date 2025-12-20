@@ -8,6 +8,15 @@ app = FastAPI(title="Magnet API", version="2.0")
 
 API_TOKEN = os.getenv("API_TOKEN", "")
 DOWNLOADS_ROOT = os.getenv("DOWNLOADS_ROOT", "/downloads")
+MOVIES_ROOT = os.getenv("MOVIES_ROOT")
+ANIME_MOVIES_ROOT = os.getenv("ANIME_MOVIES_ROOT")
+SERIES_ROOT = os.getenv("SERIES_ROOT")
+
+CATEGORY_ROOTS = {
+    "Movies": MOVIES_ROOT,
+    "AnimeMovies": ANIME_MOVIES_ROOT,
+    "Series": SERIES_ROOT,
+}
 
 QB_URL = os.getenv("QB_URL", "http://qbittorrent:8080").rstrip("/")
 QB_USER = os.getenv("QB_USER", "")
@@ -37,6 +46,15 @@ def safe_join(root: str, subpath: str | None) -> str:
     if ".." in subpath.split("/"):
         raise HTTPException(status_code=400, detail="Invalid folder path")
     return f"{root.rstrip('/')}/{subpath}"
+
+def resolve_save_path(folder: str | None) -> str:
+    if not folder:
+        return DOWNLOADS_ROOT
+
+    if folder in CATEGORY_ROOTS and CATEGORY_ROOTS[folder]:
+        return CATEGORY_ROOTS[folder].rstrip("/")
+
+    return safe_join(DOWNLOADS_ROOT, folder)
 
 def qb_login(session: requests.Session):
     if not QB_USER or not QB_PASS:
@@ -76,7 +94,7 @@ def add_magnet(payload: MagnetRequest, authorization: str | None = Header(defaul
     if not MAGNET_RE.match(payload.magnet):
         raise HTTPException(status_code=400, detail="Invalid magnet link format")
 
-    save_path = safe_join(DOWNLOADS_ROOT, payload.folder)
+    save_path = resolve_save_path(payload.folder)
 
     with requests.Session() as s:
         qb_login(s)
@@ -87,5 +105,5 @@ def add_magnet(payload: MagnetRequest, authorization: str | None = Header(defaul
         "queued_in_qbittorrent": True,
         "title": payload.title,
         "year": payload.year,
-        "save_path": save_path
+        "save_path": save_path,
     }
