@@ -1,25 +1,42 @@
-# NAS Magnet Helper (Firefox)
+# MagnetCatcher (Firefox)
 
-Eine kleine Firefox-Erweiterung, die auf der aktuell geöffneten Seite einen Magnet-Link und ein potentielles Erscheinungsjahr ausliest. Im Popup kann ein eigener Titel ergänzt werden. Alle drei Werte werden anschließend an eine konfigurierbare NAS-API gesendet, die den Download z.B. nach `/EmblyFiles/Movies/<Titel> (<Jahr>)` anlegen kann.
+MagnetCatcher grabs magnet links and metadata from the active tab, enriches them with a clean title, and fires everything to your NAS or download API with one click. The extension remembers your API URL and optional token so you can keep sending downloads without copy-paste.
 
-## Verwendung
-1. Erweiterung im Entwicklermodus in Firefox laden (about:debugging ➜ "This Firefox" ➜ "Temporary Add-on" ➜ `manifest.json` auswählen).
-2. Eine Seite mit Magnet-Link öffnen. Das Popup liest Magnet-Link, Jahr und einen Titelvorschlag aus.
-3. NAS-API-URL im Popup eintragen (z.B. `http://nas.local:5000/api/magnet`). Die URL wird in `storage.sync` gespeichert.
-4. Titel anpassen und auf **"An NAS senden"** klicken. Das Hintergrundskript sendet ein JSON:
-   ```json
-   {
-     "magnetLink": "magnet:?xt=...",
-     "title": "Mein Film",
-     "year": "2024",
-     "targetFolder": "/EmblyFiles/Movies/Mein Film (2024)"
-   }
-   ```
+## Highlights
+- 🔍 Auto-detects magnet links, release year, and a sensible title.
+- 🚀 Fires a single-button JSON request to your NAS or download API.
+- 🔑 Ships an optional bearer token (stored in `storage.sync`) for authenticated endpoints.
+- 🧠 Cleans up years and auto-builds a destination folder (`<Title>` or `<Title> (<Year>)`).
 
-## Dateien
-- `manifest.json` – Manifest v2 für Firefox.
-- `content-script.js` – Extrahiert Magnet-Link, Jahr und einen Titelvorschlag von der Seite.
-- `popup.html` / `popup.css` / `popup.js` – UI zum Anzeigen der gefundenen Daten und Trigger für den NAS-Request.
-- `background.js` – Kümmert sich um das Speichern der NAS-URL und sendet die JSON-Anfrage.
+## Quick install (Firefox temporary add-on)
+1. Open `about:debugging`.
+2. Choose **This Firefox** ➜ **Load Temporary Add-on**.
+3. Pick `Firefox-Extension/manifest.json` from this repo.
 
-> Hinweis: Falls eigene Icons verwendet werden sollen, können sie bei Bedarf in der `manifest.json` referenziert werden.
+## Usage
+1. Open a page with a magnet link (e.g., a torrent indexer).
+2. Open the popup – magnet link, year, and title are pre-filled.
+3. Enter your NAS URL and optional token (saved for next time).
+4. Adjust the title if needed and click **Send to NAS**.
+5. The background script reports status back in the popup.
+
+## API payload
+The extension sends a `POST` to your configured NAS URL with this body:
+```json
+{
+  "magnet": "magnet:?xt=...",
+  "title": "My Movie",
+  "year": 2024,
+  "folder": "My Movie (2024)"
+}
+```
+If a token is saved, it is included as `Authorization: Bearer <token>`.
+
+## Files
+- `Firefox-Extension/manifest.json` – Manifest v2 configuring the popup, background script, and content script.
+- `Firefox-Extension/content-script.js` – Extracts magnet link, year, and title from the page.
+- `Firefox-Extension/popup.*` – Popup UI (HTML, CSS, JS) with status and toast messages.
+- `Firefox-Extension/background.js` – Stores NAS URL/token and sends the JSON request.
+- `Firefox-Extension/icons/` – App icons.
+
+> Tip: If you want custom icons, update their paths in `manifest.json`.
