@@ -1,6 +1,7 @@
 const extensionApi = typeof browser !== 'undefined' ? browser : chrome;
 const DEFAULT_NAS_URL = '';
 const DEFAULT_NAS_TOKEN = '';
+const DEFAULT_CATEGORY = 'Movies';
 
 function getStoredNasUrl() {
   return new Promise((resolve) => {
@@ -30,14 +31,33 @@ function setStoredNasToken(token) {
   });
 }
 
-async function getStoredNasSettings() {
-  const [nasUrl, nasToken] = await Promise.all([getStoredNasUrl(), getStoredNasToken()]);
-  return { nasUrl, nasToken };
+function getStoredCategory() {
+  return new Promise((resolve) => {
+    extensionApi.storage.local.get({ category: DEFAULT_CATEGORY }, (items) => {
+      resolve(items.category || DEFAULT_CATEGORY);
+    });
+  });
 }
 
-async function sendToNas({ magnetLink, title, year, nasUrl, nasToken }) {
+function setStoredCategory(category) {
+  return new Promise((resolve) => {
+    extensionApi.storage.local.set({ category }, () => resolve(category));
+  });
+}
+
+async function getStoredNasSettings() {
+  const [nasUrl, nasToken, category] = await Promise.all([
+    getStoredNasUrl(),
+    getStoredNasToken(),
+    getStoredCategory()
+  ]);
+  return { nasUrl, nasToken, category };
+}
+
+async function sendToNas({ magnetLink, title, year, nasUrl, nasToken, category }) {
   const url = nasUrl || (await getStoredNasUrl());
   const token = nasToken || (await getStoredNasToken());
+  const targetCategory = category || (await getStoredCategory()) || DEFAULT_CATEGORY;
 
   if (!url) {
     throw new Error('NAS API URL is missing.');
@@ -46,13 +66,12 @@ async function sendToNas({ magnetLink, title, year, nasUrl, nasToken }) {
   const targetTitle = title || 'Untitled';
   const parsedYear = Number.parseInt(year, 10);
   const normalizedYear = Number.isFinite(parsedYear) ? parsedYear : undefined;
-  const folderName = normalizedYear ? `${targetTitle} (${normalizedYear})` : targetTitle;
 
   const payload = {
     magnet: magnetLink,
     title: targetTitle,
     year: normalizedYear,
-    folder: folderName
+    folder: targetCategory
   };
 
   const headers = {
@@ -112,7 +131,17 @@ extensionApi.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 
   if (message.type === 'getNasSettings') {
-    getStoredNasSettings().then(({ nasUrl, nasToken }) => sendResponse({ ok: true, nasUrl, nasToken }));
+    getStoredNasSettings().then(({ nasUrl, nasToken, category }) => sendResponse({ ok: true, nasUrl, nasToken, category }));
+    return true;
+  }
+
+  if (message.type === 'saveCategory') {
+    setStoredCategory(message.category || DEFAULT_CATEGORY).then(() => sendResponse({ ok: true }));
+    return true;
+  }
+
+  if (message.type === 'getCategory') {
+    getStoredCategory().then((category) => sendResponse({ ok: true, category }));
     return true;
   }
 

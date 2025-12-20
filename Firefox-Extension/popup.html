@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="popup.css">
-  <title>MagnetCatcher V1</title>
+  <title>MagnetCatcher V2</title>
 </head>
 
 <body>
@@ -18,7 +18,7 @@
         <div class="title-row">
           <img src="icons/magnet.gif" alt="Icon" class="logo ringed" />
           <div>
-            <h1>MagnetCatcher V1</h1>
+            <h1>MagnetCatcher V2</h1>
             <p class="subtitle">Magnet link picker for torrent sites. <br> Visit my <a href="https://github.com/Marco-Melchio/magnet-extension" target="_blank" rel="noopener noreferrer" style="color: rgb(0, 81, 255)">Github</a> for more information.</p>
           </div>
         </div>
@@ -43,6 +43,14 @@
     <section class="field">
       <label for="year">Year</label>
       <input id="year" type="text" placeholder="Set a year" aria-label="Year" />
+    </section>
+
+    <section class="field">
+      <label for="category">Category</label>
+      <div class="pill-select" role="group" aria-label="Category">
+        <button type="button" class="pill active" data-category="Movies">Movies</button>
+        <button type="button" class="pill" data-category="AnimeMovies">Anime Movies</button>
+      </div>
     </section>
 
     <section class="field">

@@ -9,8 +9,11 @@ const statusEl = document.getElementById('status');
 const toastEl = document.getElementById('toast');
 const refreshBtn = document.getElementById('refresh');
 const sendBtn = document.getElementById('send');
+const categoryButtons = Array.from(document.querySelectorAll('.pill'));
 
 let toastTimeout;
+
+const DEFAULT_CATEGORY = 'Movies';
 
 function setStatus(message, state = 'ready') {
   statusEl.textContent = message;
@@ -49,9 +52,11 @@ async function loadNasSettings() {
       if (response && response.ok) {
         nasUrlInput.value = response.nasUrl || '';
         nasTokenInput.value = response.nasToken || '';
+        setSelectedCategory(response.category || DEFAULT_CATEGORY);
         resolve(response);
       } else {
-        resolve({ nasUrl: '', nasToken: '' });
+        setSelectedCategory(DEFAULT_CATEGORY);
+        resolve({ nasUrl: '', nasToken: '', category: DEFAULT_CATEGORY });
       }
     });
   });
@@ -71,6 +76,24 @@ function debounce(fn, delay = 300) {
     clearTimeout(timeoutId);
     timeoutId = setTimeout(() => fn(...args), delay);
   };
+}
+
+function setSelectedCategory(category) {
+  const target = category || DEFAULT_CATEGORY;
+  categoryButtons.forEach((button) => {
+    const isActive = button.dataset.category === target;
+    button.classList.toggle('active', isActive);
+    button.setAttribute('aria-pressed', isActive);
+  });
+}
+
+function getSelectedCategory() {
+  const active = categoryButtons.find((button) => button.classList.contains('active'));
+  return (active && active.dataset.category) || DEFAULT_CATEGORY;
+}
+
+function saveCategory(category) {
+  extensionApi.runtime.sendMessage({ type: 'saveCategory', category });
 }
 
 async function collectData() {
@@ -100,6 +123,7 @@ async function sendToNas() {
   const year = yearInput.value.trim();
   const nasUrl = nasUrlInput.value.trim();
   const nasToken = nasTokenInput.value.trim();
+  const category = getSelectedCategory();
 
   if (!magnetLink) {
     setStatus('No magnet link found.', 'error');
@@ -117,7 +141,7 @@ async function sendToNas() {
   extensionApi.runtime.sendMessage(
     {
       type: 'sendToNAS',
-      payload: { magnetLink, title, year, nasUrl, nasToken }
+      payload: { magnetLink, title, year, nasUrl, nasToken, category }
     },
     (response) => {
       if (!response) {
@@ -141,6 +165,13 @@ const debouncedSaveNasToken = debounce((value) => saveNasToken(value));
 
 nasUrlInput.addEventListener('input', (event) => debouncedSaveNasUrl(event.target.value));
 nasTokenInput.addEventListener('input', (event) => debouncedSaveNasToken(event.target.value));
+
+categoryButtons.forEach((button) => {
+  button.addEventListener('click', () => {
+    setSelectedCategory(button.dataset.category);
+    saveCategory(button.dataset.category);
+  });
+});
 
 document.addEventListener('DOMContentLoaded', async () => {
   await loadNasSettings();
