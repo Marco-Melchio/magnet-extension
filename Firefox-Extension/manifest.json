@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
-  "name": "MagnetCatcher V1",
-  "version": "1.0.0",
+  "name": "MagnetCatcher V2",
+  "version": "2.0.0",
   "description": "A Firefox extension to catch movie magnet links and send them to your NAS download station.",
   "permissions": [
     "activeTab",

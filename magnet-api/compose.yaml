@@ -9,7 +9,7 @@ services:
       - WEBUI_PORT=8080
     volumes:
       - ./qbittorrent:/config
-      - /volume2/EmblyFiles/Movies:/downloads
+      - /volume2/EmblyFiles:/downloads
     ports:
       - "8080:8080"
     restart: unless-stopped
@@ -20,7 +20,7 @@ services:
     working_dir: /app
     volumes:
       - ./app:/app:ro
-      - /volume2/EmblyFiles/Movies:/downloads
+      - /volume2/EmblyFiles:/downloads
     environment:
       - API_TOKEN=a9F3kL2M0s8xQeVbC7D5PZJYwE6R4t1U
       - DOWNLOADS_ROOT=/downloads
