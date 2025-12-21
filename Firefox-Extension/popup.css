@@ -124,13 +124,12 @@ header.hero {
 
 .crest-icon {
   position: relative;
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0)),
-    linear-gradient(145deg, rgba(34, 211, 238, 0.28), rgba(138, 92, 251, 0.28));
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14), 0 10px 24px rgba(0, 0, 0, 0.45);
-  padding: 8px;
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(34, 211, 238, 0.2), rgba(138, 92, 251, 0.2));
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06), 0 12px 28px rgba(0, 0, 0, 0.45);
+  padding: 10px;
   object-fit: contain;
   animation: float 6.5s ease-in-out infinite;
 }
