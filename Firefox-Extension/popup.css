@@ -18,7 +18,7 @@
 body {
   font-family: "Inter", "Orbitron", system-ui, -apple-system, sans-serif;
   margin: 0;
-  padding: 0;
+  padding: 12px;
   width: 400px;
   min-height: 100vh;
   background: var(--bg);
@@ -26,6 +26,9 @@ body {
   position: relative;
   overflow: hidden;
   letter-spacing: 0.01em;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
 }
 
 .gradient-bg,
@@ -68,11 +71,13 @@ body {
   z-index: 1;
   background: var(--card);
   border: 1px solid var(--border);
-  box-shadow: 0 25px 80px rgba(8, 7, 25, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.04);
-  border-radius: 1px;
-  padding: 20px;
-  backdrop-filter: blur(14px);
+  box-shadow: 0 18px 48px rgba(8, 7, 25, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.04);
+  border-radius: 10px;
+  padding: 14px 14px 18px;
+  backdrop-filter: blur(12px);
   overflow: hidden;
+  width: 100%;
+  max-width: 380px;
 }
 
 .card::before {
@@ -93,28 +98,28 @@ body {
 header.hero {
   display: grid;
   grid-template-columns: auto 1fr;
-  gap: 10px 12px;
+  gap: 8px 10px;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .crest {
   position: relative;
-  width: 68px;
-  height: 68px;
-  border-radius: 18px;
+  width: 58px;
+  height: 58px;
+  border-radius: 16px;
   display: grid;
   place-items: center;
 }
 
 .crest-glow {
   position: absolute;
-  inset: -8px;
-  border-radius: 22px;
-  background: conic-gradient(from 120deg, rgba(138, 92, 251, 0.35), rgba(34, 211, 238, 0.25), rgba(244, 114, 182, 0.3), rgba(138, 92, 251, 0.35));
-  filter: blur(26px);
-  opacity: 0.9;
-  animation: crest-spin 14s linear infinite;
+  inset: -10px;
+  border-radius: 20px;
+  background: conic-gradient(from 120deg, rgba(138, 92, 251, 0.45), rgba(34, 211, 238, 0.32), rgba(244, 114, 182, 0.38), rgba(138, 92, 251, 0.45));
+  filter: blur(20px);
+  opacity: 0.95;
+  animation: crest-spin 16s linear infinite;
 }
 
 .crest-icon {
@@ -132,7 +137,7 @@ header.hero {
 .title-wrap {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
 }
 
 .eyebrow {
@@ -145,16 +150,16 @@ header.hero {
 
 h1 {
   margin: 0;
-  font-size: 18px;
-  letter-spacing: 0.5px;
+  font-size: 16px;
+  letter-spacing: 0.4px;
   text-transform: uppercase;
 }
 
 .subtitle {
-  margin: 2px 0 0;
+  margin: 1px 0 0;
   color: var(--text-muted);
-  font-size: 12px;
-  line-height: 1.5;
+  font-size: 11px;
+  line-height: 1.35;
 }
 
 .subtitle a {
