@@ -49,9 +49,15 @@ def safe_join(root: str, subpath: str | None) -> str:
     return f"{root.rstrip('/')}/{subpath}"
 
 def resolve_save_path(folder: str | None, category: str | None) -> str:
+    # Prefer explicit category roots when configured
     if category in CATEGORY_ROOTS and CATEGORY_ROOTS[category]:
         base_root = CATEGORY_ROOTS[category].rstrip("/")
         return safe_join(base_root, folder)
+
+    # Fallback: keep the category as a subfolder under DOWNLOADS_ROOT
+    if category:
+        combined = f"{category}/{folder}" if folder else category
+        return safe_join(DOWNLOADS_ROOT, combined)
 
     if folder in CATEGORY_ROOTS and CATEGORY_ROOTS[folder]:
         return CATEGORY_ROOTS[folder].rstrip("/")
