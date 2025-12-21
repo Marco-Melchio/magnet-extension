@@ -7,6 +7,8 @@
   --panel: rgba(12, 15, 30, 0.9);
   --card: rgba(255, 255, 255, 0.04);
   --border: rgba(255, 255, 255, 0.08);
+  --select-bg: linear-gradient(135deg, rgba(34, 211, 238, 0.12), rgba(138, 92, 251, 0.14));
+  --select-option-bg: linear-gradient(135deg, #0b1021, #0f172a);
   --text: #e2e8f0;
   --text-muted: #94a3b8;
 }
