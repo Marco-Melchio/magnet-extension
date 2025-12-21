@@ -97,11 +97,9 @@ body {
 
 header.hero {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 8px;
-  text-align: center;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
 }
 
 .hero-logo {
@@ -119,7 +117,7 @@ header.hero {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  align-items: center;
+  align-items: flex-start;
 }
 
 .eyebrow {
