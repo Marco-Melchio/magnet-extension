@@ -9,7 +9,7 @@ const statusEl = document.getElementById('status');
 const toastEl = document.getElementById('toast');
 const refreshBtn = document.getElementById('refresh');
 const sendBtn = document.getElementById('send');
-const categoryButtons = Array.from(document.querySelectorAll('.pill'));
+const categorySelect = document.getElementById('category');
 
 let toastTimeout;
 
@@ -80,16 +80,12 @@ function debounce(fn, delay = 300) {
 
 function setSelectedCategory(category) {
   const target = category || DEFAULT_CATEGORY;
-  categoryButtons.forEach((button) => {
-    const isActive = button.dataset.category === target;
-    button.classList.toggle('active', isActive);
-    button.setAttribute('aria-pressed', isActive);
-  });
+  const availableOptions = Array.from(categorySelect.options).map((option) => option.value);
+  categorySelect.value = availableOptions.includes(target) ? target : DEFAULT_CATEGORY;
 }
 
 function getSelectedCategory() {
-  const active = categoryButtons.find((button) => button.classList.contains('active'));
-  return (active && active.dataset.category) || DEFAULT_CATEGORY;
+  return categorySelect.value || DEFAULT_CATEGORY;
 }
 
 function saveCategory(category) {
@@ -166,11 +162,10 @@ const debouncedSaveNasToken = debounce((value) => saveNasToken(value));
 nasUrlInput.addEventListener('input', (event) => debouncedSaveNasUrl(event.target.value));
 nasTokenInput.addEventListener('input', (event) => debouncedSaveNasToken(event.target.value));
 
-categoryButtons.forEach((button) => {
-  button.addEventListener('click', () => {
-    setSelectedCategory(button.dataset.category);
-    saveCategory(button.dataset.category);
-  });
+categorySelect.addEventListener('change', (event) => {
+  const selectedCategory = event.target.value;
+  setSelectedCategory(selectedCategory);
+  saveCategory(selectedCategory);
 });
 
 document.addEventListener('DOMContentLoaded', async () => {
