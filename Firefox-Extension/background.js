@@ -66,12 +66,14 @@ async function sendToNas({ magnetLink, title, year, nasUrl, nasToken, category }
   const targetTitle = title || 'Untitled';
   const parsedYear = Number.parseInt(year, 10);
   const normalizedYear = Number.isFinite(parsedYear) ? parsedYear : undefined;
+  const folderName = normalizedYear ? `${targetTitle} (${normalizedYear})` : targetTitle;
 
   const payload = {
     magnet: magnetLink,
     title: targetTitle,
     year: normalizedYear,
-    folder: targetCategory
+    folder: folderName,
+    category: targetCategory
   };
 
   const headers = {

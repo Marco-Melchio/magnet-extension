@@ -29,6 +29,7 @@ class MagnetRequest(BaseModel):
     title: str | None = None
     year: int | None = None
     folder: str | None = None
+    category: str | None = None
 
 def require_token(auth_header: str | None):
     if not API_TOKEN:
@@ -47,9 +48,10 @@ def safe_join(root: str, subpath: str | None) -> str:
         raise HTTPException(status_code=400, detail="Invalid folder path")
     return f"{root.rstrip('/')}/{subpath}"
 
-def resolve_save_path(folder: str | None) -> str:
-    if not folder:
-        return DOWNLOADS_ROOT
+def resolve_save_path(folder: str | None, category: str | None) -> str:
+    if category in CATEGORY_ROOTS and CATEGORY_ROOTS[category]:
+        base_root = CATEGORY_ROOTS[category].rstrip("/")
+        return safe_join(base_root, folder)
 
     if folder in CATEGORY_ROOTS and CATEGORY_ROOTS[folder]:
         return CATEGORY_ROOTS[folder].rstrip("/")
@@ -94,7 +96,7 @@ def add_magnet(payload: MagnetRequest, authorization: str | None = Header(defaul
     if not MAGNET_RE.match(payload.magnet):
         raise HTTPException(status_code=400, detail="Invalid magnet link format")
 
-    save_path = resolve_save_path(payload.folder)
+    save_path = resolve_save_path(payload.folder, payload.category)
 
     with requests.Session() as s:
         qb_login(s)
