@@ -12,7 +12,8 @@ const sendBtn = document.getElementById('send');
 const categorySelect = document.getElementById('category');
 const seasonInput = document.getElementById('season');
 const episodeInput = document.getElementById('episode');
-const seriesMetaSection = document.getElementById('seriesMeta');
+const settingsToggle = document.getElementById('settingsToggle');
+const settingsFields = document.getElementById('settingsFields');
 
 let toastTimeout;
 
@@ -97,14 +98,18 @@ function isSeriesCategory(category) {
 
 function toggleSeriesInputs(category) {
   const shouldShow = isSeriesCategory(category);
-  seriesMetaSection.classList.toggle('is-hidden', !shouldShow);
-  seasonInput.disabled = !shouldShow;
-  episodeInput.disabled = !shouldShow;
   seasonInput.required = shouldShow;
   if (!shouldShow) {
     seasonInput.setCustomValidity('');
     episodeInput.setCustomValidity('');
   }
+}
+
+function toggleSettingsFields() {
+  const shouldShow = settingsFields.classList.contains('is-hidden');
+  settingsFields.classList.toggle('is-hidden', !shouldShow);
+  settingsFields.setAttribute('aria-hidden', String(!shouldShow));
+  settingsToggle.setAttribute('aria-expanded', String(shouldShow));
 }
 
 function saveCategory(category) {
@@ -209,6 +214,8 @@ categorySelect.addEventListener('change', (event) => {
   saveCategory(selectedCategory);
   toggleSeriesInputs(selectedCategory);
 });
+
+settingsToggle.addEventListener('click', toggleSettingsFields);
 
 document.addEventListener('DOMContentLoaded', async () => {
   await loadNasSettings();
