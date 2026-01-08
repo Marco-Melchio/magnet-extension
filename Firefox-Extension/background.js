@@ -54,7 +54,7 @@ async function getStoredNasSettings() {
   return { nasUrl, nasToken, category };
 }
 
-async function sendToNas({ magnetLink, title, year, nasUrl, nasToken, category }) {
+async function sendToNas({ magnetLink, title, year, nasUrl, nasToken, category, season, episode }) {
   const url = nasUrl || (await getStoredNasUrl());
   const token = nasToken || (await getStoredNasToken());
   const targetCategory = category || (await getStoredCategory()) || DEFAULT_CATEGORY;
@@ -67,6 +67,13 @@ async function sendToNas({ magnetLink, title, year, nasUrl, nasToken, category }
   const parsedYear = Number.parseInt(year, 10);
   const normalizedYear = Number.isFinite(parsedYear) ? parsedYear : undefined;
   const folderName = normalizedYear ? `${targetTitle} (${normalizedYear})` : targetTitle;
+  const isSeries = targetCategory === 'Series' || targetCategory === 'AnimeSeries';
+  const normalizedSeason = Number.isInteger(season) ? season : Number.parseInt(season, 10);
+  const normalizedEpisode = Number.isInteger(episode) ? episode : Number.parseInt(episode, 10);
+
+  if (isSeries && (!Number.isInteger(normalizedSeason) || normalizedSeason <= 0)) {
+    throw new Error('Season is required for series and must be a valid number.');
+  }
 
   const payload = {
     magnet: magnetLink,
@@ -75,6 +82,13 @@ async function sendToNas({ magnetLink, title, year, nasUrl, nasToken, category }
     folder: folderName,
     category: targetCategory
   };
+
+  if (isSeries) {
+    payload.season = normalizedSeason;
+    if (Number.isInteger(normalizedEpisode)) {
+      payload.episode = normalizedEpisode;
+    }
+  }
 
   const headers = {
     'Content-Type': 'application/json'

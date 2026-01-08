@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="popup.css">
-  <title>MagnetCatcher V2</title>
+  <title>MagnetCatcher V3</title>
 </head>
 
 <body>
@@ -16,7 +16,7 @@
     <header class="hero">
       <img src="icons/MagnetCatcher64.png" alt="Magnet icon" class="hero-logo" />
       <div class="title-wrap">
-        <h1>MagnetCatcher V2</h1>
+        <h1>MagnetCatcher V3</h1>
         <p class="subtitle">Send magnet links to your Emby. View on <a href="https://github.com/Marco-Melchio/magnet-extension" target="_blank" rel="noopener noreferrer">GitHub</a>.</p>
       </div>
     </header>
@@ -47,7 +47,21 @@
         <select id="category" aria-label="Category">
           <option value="Movies">Movies</option>
           <option value="AnimeMovies">Anime Movies</option>
+          <option value="Series">Series</option>
+          <option value="AnimeSeries">Anime Series</option>
         </select>
+      </div>
+    </section>
+
+    <section class="field dual-field is-hidden" id="seriesMeta">
+      <div class="field-block">
+        <label for="season">Season</label>
+        <input id="season" type="number" min="1" step="1" inputmode="numeric" placeholder="Season number" aria-label="Season" />
+      </div>
+
+      <div class="field-block">
+        <label for="episode">Episode</label>
+        <input id="episode" type="number" min="1" step="1" inputmode="numeric" placeholder="Episode (optional)" aria-label="Episode" />
       </div>
     </section>
 
