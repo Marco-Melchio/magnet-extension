@@ -11,11 +11,13 @@ DOWNLOADS_ROOT = os.getenv("DOWNLOADS_ROOT", "/downloads")
 MOVIES_ROOT = os.getenv("MOVIES_ROOT")
 ANIME_MOVIES_ROOT = os.getenv("ANIME_MOVIES_ROOT")
 SERIES_ROOT = os.getenv("SERIES_ROOT")
+ANIME_SERIES_ROOT = os.getenv("ANIME_SERIES_ROOT")
 
 CATEGORY_ROOTS = {
     "Movies": MOVIES_ROOT,
     "AnimeMovies": ANIME_MOVIES_ROOT,
     "Series": SERIES_ROOT,
+    "AnimeSeries": ANIME_SERIES_ROOT,
 }
 
 QB_URL = os.getenv("QB_URL", "http://qbittorrent:8080").rstrip("/")
@@ -30,6 +32,8 @@ class MagnetRequest(BaseModel):
     year: int | None = None
     folder: str | None = None
     category: str | None = None
+    season: int | None = Field(default=None, ge=1)
+    episode: int | None = Field(default=None, ge=1)
 
 def require_token(auth_header: str | None):
     if not API_TOKEN:
@@ -63,6 +67,19 @@ def resolve_save_path(folder: str | None, category: str | None) -> str:
         return CATEGORY_ROOTS[folder].rstrip("/")
 
     return safe_join(DOWNLOADS_ROOT, folder)
+
+def format_series_folder(payload: MagnetRequest) -> str:
+    if payload.folder:
+        base_folder = payload.folder
+    else:
+        target_title = payload.title or "Untitled"
+        base_folder = f"{target_title} ({payload.year})" if payload.year else target_title
+
+    season = payload.season
+    if season is None:
+        raise HTTPException(status_code=400, detail="Season is required for series")
+
+    return f"{base_folder}/Season{season:02d}"
 
 def qb_login(session: requests.Session):
     if not QB_USER or not QB_PASS:
@@ -102,7 +119,11 @@ def add_magnet(payload: MagnetRequest, authorization: str | None = Header(defaul
     if not MAGNET_RE.match(payload.magnet):
         raise HTTPException(status_code=400, detail="Invalid magnet link format")
 
-    save_path = resolve_save_path(payload.folder, payload.category)
+    category = payload.category
+    if category in {"Series", "AnimeSeries"}:
+        save_path = resolve_save_path(format_series_folder(payload), category)
+    else:
+        save_path = resolve_save_path(payload.folder, category)
 
     with requests.Session() as s:
         qb_login(s)

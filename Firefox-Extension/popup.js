@@ -10,6 +10,9 @@ const toastEl = document.getElementById('toast');
 const refreshBtn = document.getElementById('refresh');
 const sendBtn = document.getElementById('send');
 const categorySelect = document.getElementById('category');
+const seasonInput = document.getElementById('season');
+const episodeInput = document.getElementById('episode');
+const seriesMetaSection = document.getElementById('seriesMeta');
 
 let toastTimeout;
 
@@ -88,6 +91,22 @@ function getSelectedCategory() {
   return categorySelect.value || DEFAULT_CATEGORY;
 }
 
+function isSeriesCategory(category) {
+  return category === 'Series' || category === 'AnimeSeries';
+}
+
+function toggleSeriesInputs(category) {
+  const shouldShow = isSeriesCategory(category);
+  seriesMetaSection.classList.toggle('is-hidden', !shouldShow);
+  seasonInput.disabled = !shouldShow;
+  episodeInput.disabled = !shouldShow;
+  seasonInput.required = shouldShow;
+  if (!shouldShow) {
+    seasonInput.setCustomValidity('');
+    episodeInput.setCustomValidity('');
+  }
+}
+
 function saveCategory(category) {
   extensionApi.runtime.sendMessage({ type: 'saveCategory', category });
 }
@@ -120,6 +139,8 @@ async function sendToNas() {
   const nasUrl = nasUrlInput.value.trim();
   const nasToken = nasTokenInput.value.trim();
   const category = getSelectedCategory();
+  const seasonValue = seasonInput.value.trim();
+  const episodeValue = episodeInput.value.trim();
 
   if (!magnetLink) {
     setStatus('No magnet link found.', 'error');
@@ -129,15 +150,35 @@ async function sendToNas() {
     setStatus('Please provide the NAS API URL.', 'error');
     return;
   }
+  if (isSeriesCategory(category)) {
+    if (!seasonValue) {
+      setStatus('Season is required for series.', 'error');
+      seasonInput.focus();
+      return;
+    }
+    if (!/^\d+$/.test(seasonValue)) {
+      setStatus('Season must be a valid number.', 'error');
+      seasonInput.focus();
+      return;
+    }
+    if (episodeValue && !/^\d+$/.test(episodeValue)) {
+      setStatus('Episode must be a valid number.', 'error');
+      episodeInput.focus();
+      return;
+    }
+  }
 
   setStatus('Sending', 'sending');
   saveNasUrl(nasUrl);
   saveNasToken(nasToken);
 
+  const season = isSeriesCategory(category) && seasonValue ? Number.parseInt(seasonValue, 10) : undefined;
+  const episode = isSeriesCategory(category) && episodeValue ? Number.parseInt(episodeValue, 10) : undefined;
+
   extensionApi.runtime.sendMessage(
     {
       type: 'sendToNAS',
-      payload: { magnetLink, title, year, nasUrl, nasToken, category }
+      payload: { magnetLink, title, year, nasUrl, nasToken, category, season, episode }
     },
     (response) => {
       if (!response) {
@@ -166,10 +207,12 @@ categorySelect.addEventListener('change', (event) => {
   const selectedCategory = event.target.value;
   setSelectedCategory(selectedCategory);
   saveCategory(selectedCategory);
+  toggleSeriesInputs(selectedCategory);
 });
 
 document.addEventListener('DOMContentLoaded', async () => {
   await loadNasSettings();
+  toggleSeriesInputs(getSelectedCategory());
   await collectData();
 });
 

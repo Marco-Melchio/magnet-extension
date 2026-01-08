@@ -188,6 +188,10 @@ h1 {
   gap: 10px;
 }
 
+.field.is-hidden {
+  display: none;
+}
+
 .dual-field {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
