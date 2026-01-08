@@ -14,6 +14,8 @@ const seasonInput = document.getElementById('season');
 const episodeInput = document.getElementById('episode');
 const settingsToggle = document.getElementById('settingsToggle');
 const settingsFields = document.getElementById('settingsFields');
+const settingsBack = document.getElementById('settingsBack');
+const mainContent = document.getElementById('mainContent');
 
 let toastTimeout;
 
@@ -105,11 +107,15 @@ function toggleSeriesInputs(category) {
   }
 }
 
-function toggleSettingsFields() {
-  const shouldShow = settingsFields.classList.contains('is-hidden');
+function toggleSettingsFields(forceState) {
+  const shouldShow = typeof forceState === 'boolean'
+    ? forceState
+    : settingsFields.classList.contains('is-hidden');
   settingsFields.classList.toggle('is-hidden', !shouldShow);
   settingsFields.setAttribute('aria-hidden', String(!shouldShow));
   settingsToggle.setAttribute('aria-expanded', String(shouldShow));
+  settingsToggle.setAttribute('aria-label', shouldShow ? 'Close settings' : 'Open settings');
+  mainContent.classList.toggle('is-hidden', shouldShow);
 }
 
 function saveCategory(category) {
@@ -215,7 +221,8 @@ categorySelect.addEventListener('change', (event) => {
   toggleSeriesInputs(selectedCategory);
 });
 
-settingsToggle.addEventListener('click', toggleSettingsFields);
+settingsToggle.addEventListener('click', () => toggleSettingsFields());
+settingsBack.addEventListener('click', () => toggleSettingsFields(false));
 
 document.addEventListener('DOMContentLoaded', async () => {
   await loadNasSettings();
