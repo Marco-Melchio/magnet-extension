@@ -19,59 +19,72 @@
         <h1>MagnetCatcher V3</h1>
         <p class="subtitle">Send magnet links to your Emby. View on <a href="https://github.com/Marco-Melchio/magnet-extension" target="_blank" rel="noopener noreferrer">GitHub</a>.</p>
       </div>
+      <button id="settingsToggle" type="button" class="ghost settings-icon-button" aria-expanded="false" aria-controls="settingsFields" aria-label="Open settings">
+        <span class="settings-static" aria-hidden="true"></span>
+      </button>
     </header>
 
-    <section class="field">
-      <label for="magnetLink">Magnet link</label>
-      <div class="input-row">
-        <input id="magnetLink" type="text" placeholder="Enter link" aria-label="Magnet link" />
-        <button id="refresh" type="button" title="Reload" class="ghost refresh-button" aria-label="Reload">
-          <span class="refresh-static" aria-hidden="true"></span>
-        </button>
+    <div id="mainContent">
+      <section class="field">
+        <label for="magnetLink">Magnet link</label>
+        <div class="input-row">
+          <input id="magnetLink" type="text" placeholder="Enter link" aria-label="Magnet link" />
+          <button id="refresh" type="button" title="Reload" class="ghost refresh-button" aria-label="Reload">
+            <span class="refresh-static" aria-hidden="true"></span>
+          </button>
+        </div>
+      </section>
+
+      <section class="field">
+        <label for="title">Title</label>
+        <input id="title" type="text" placeholder="Set a title" aria-label="Title" />
+      </section>
+
+      <section class="field dual-field">
+        <div class="field-block">
+          <label for="year">Year</label>
+          <input id="year" type="text" placeholder="Set a year" aria-label="Year" />
+        </div>
+
+        <div class="field-block">
+          <label for="category">Category</label>
+          <select id="category" aria-label="Category">
+            <option value="Movies">Movies</option>
+            <option value="AnimeMovies">Anime Movies</option>
+            <option value="Series">Series</option>
+            <option value="AnimeSeries">Anime Series</option>
+          </select>
+        </div>
+      </section>
+
+      <section class="field dual-field" id="seriesMeta">
+        <div class="field-block">
+          <label for="season">Season</label>
+          <input id="season" type="number" min="1" step="1" inputmode="numeric" placeholder="Season number" aria-label="Season" />
+        </div>
+
+        <div class="field-block">
+          <label for="episode">Episode</label>
+          <input id="episode" type="number" min="1" step="1" inputmode="numeric" placeholder="Episode (optional)" aria-label="Episode" />
+        </div>
+      </section>
+
+      <div class="actions">
+        <div>
+          <button id="send" type="button">Send</button>
+        </div>
+        <span id="status" class="status-chip" role="status" aria-live="polite"></span>
       </div>
-    </section>
-
-    <section class="field">
-      <label for="title">Title</label>
-      <input id="title" type="text" placeholder="Set a title" aria-label="Title" />
-    </section>
-
-    <section class="field dual-field">
-      <div class="field-block">
-        <label for="year">Year</label>
-        <input id="year" type="text" placeholder="Set a year" aria-label="Year" />
-      </div>
-
-      <div class="field-block">
-        <label for="category">Category</label>
-        <select id="category" aria-label="Category">
-          <option value="Movies">Movies</option>
-          <option value="AnimeMovies">Anime Movies</option>
-          <option value="Series">Series</option>
-          <option value="AnimeSeries">Anime Series</option>
-        </select>
-      </div>
-    </section>
-
-    <section class="field dual-field" id="seriesMeta">
-      <div class="field-block">
-        <label for="season">Season</label>
-        <input id="season" type="number" min="1" step="1" inputmode="numeric" placeholder="Season number" aria-label="Season" />
-      </div>
-
-      <div class="field-block">
-        <label for="episode">Episode</label>
-        <input id="episode" type="number" min="1" step="1" inputmode="numeric" placeholder="Episode (optional)" aria-label="Episode" />
-      </div>
-    </section>
-
-    <section class="field settings-toggle">
-      <button id="settingsToggle" type="button" class="settings-button" aria-expanded="false" aria-controls="settingsFields">
-        Settings
-      </button>
-    </section>
+    </div>
 
     <div id="settingsFields" class="settings-fields is-hidden" aria-hidden="true">
+      <div class="settings-header">
+        <button id="settingsBack" type="button" class="ghost settings-back-button" aria-label="Back to main view">
+          Back
+        </button>
+        <span class="settings-title">Settings</span>
+      </div>
+
       <section class="field">
         <label for="nasUrl">API URL</label>
         <input id="nasUrl" type="text" aria-label="NAS URL" placeholder="http://192.168.x.x:5050/api/magnet"/>
@@ -81,13 +94,6 @@
         <label for="nasToken">API Token</label>
         <input id="nasToken" type="text" aria-label="NAS Token" placeholder="Enter API token"/>
       </section>
-    </div>
-
-    <div class="actions">
-      <div>
-        <button id="send" type="button">Send</button>
-      </div>
-      <span id="status" class="status-chip" role="status" aria-live="polite"></span>
     </div>
   </div>
 
