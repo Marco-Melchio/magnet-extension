@@ -250,6 +250,7 @@ h1 {
 }
 
 .settings-static {
+  display: inline-block;
   width: 22px;
   height: 22px;
   border-radius: 50%;
