@@ -101,6 +101,9 @@ function isSeriesCategory(category) {
 function toggleSeriesInputs(category) {
   const shouldShow = isSeriesCategory(category);
   seasonInput.required = shouldShow;
+  seasonInput.disabled = !shouldShow;
+  episodeInput.disabled = !shouldShow;
+  document.getElementById('seriesMeta').classList.toggle('is-disabled', !shouldShow);
   if (!shouldShow) {
     seasonInput.setCustomValidity('');
     episodeInput.setCustomValidity('');
