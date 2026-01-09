@@ -3,6 +3,7 @@
 
   const YEAR_REGEX = /\b(19|20)\d{2}\b/;
   const MAGNET_REGEX = /magnet:\?[^"'\s<>]+/i;
+  const SEASON_EPISODE_REGEX = /\bS(\d{1,2})E(\d{1,2})\b/i;
 
   function textFromSelector(selectors) {
     for (const selector of selectors) {
@@ -84,13 +85,31 @@
     return '';
   }
 
+  function findSeasonEpisode() {
+    const candidates = [
+      document.title || '',
+      window.location.href,
+      textFromSelector(['h1', 'h2', '.title', '[data-title]'])
+    ];
+
+    for (const candidate of candidates) {
+      const match = candidate.match(SEASON_EPISODE_REGEX);
+      if (match) {
+        return { season: match[1], episode: match[2] };
+      }
+    }
+
+    return { season: '', episode: '' };
+  }
+
   extensionApi.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message && message.type === 'collectData') {
       const magnetLink = findMagnetLink();
       const year = findYear();
       const title = deriveTitle(year);
+      const { season, episode } = findSeasonEpisode();
 
-      sendResponse({ magnetLink, year, title });
+      sendResponse({ magnetLink, year, title, season, episode });
     }
   });
 })();

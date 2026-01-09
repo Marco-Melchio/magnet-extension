@@ -140,6 +140,8 @@ async function collectData() {
       magnetInput.value = response.magnetLink || '';
       yearInput.value = response.year || '';
       titleInput.value = response.title || '';
+      seasonInput.value = response.season || '';
+      episodeInput.value = response.episode || '';
       setStatus('Ready', 'ready');
       resolve(response);
     });
