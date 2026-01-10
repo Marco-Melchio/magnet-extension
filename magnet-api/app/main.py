@@ -94,14 +94,23 @@ def qb_login(session: requests.Session):
     if r.status_code != 200 or r.text.strip() != "Ok.":
         raise HTTPException(status_code=502, detail="qBittorrent login failed")
 
-def qb_add_magnet(session: requests.Session, magnet: str, savepath: str):
+def qb_add_magnet(
+    session: requests.Session,
+    magnet: str,
+    savepath: str,
+    content_layout: str | None = None,
+):
+    data = {
+        "urls": magnet,
+        "savepath": savepath,
+        "autoTMM": "false",
+    }
+    if content_layout:
+        data["contentLayout"] = content_layout
+
     r = session.post(
         f"{QB_URL}/api/v2/torrents/add",
-        data={
-            "urls": magnet,
-            "savepath": savepath,
-            "autoTMM": "false",
-        },
+        data=data,
         timeout=15,
     )
 
@@ -120,14 +129,16 @@ def add_magnet(payload: MagnetRequest, authorization: str | None = Header(defaul
         raise HTTPException(status_code=400, detail="Invalid magnet link format")
 
     category = payload.category
+    content_layout = None
     if category in {"Series", "AnimeSeries"}:
         save_path = resolve_save_path(format_series_folder(payload), category)
+        content_layout = "NoSubfolder"
     else:
         save_path = resolve_save_path(payload.folder, category)
 
     with requests.Session() as s:
         qb_login(s)
-        qb_add_magnet(s, payload.magnet, save_path)
+        qb_add_magnet(s, payload.magnet, save_path, content_layout)
 
     return {
         "received": True,
