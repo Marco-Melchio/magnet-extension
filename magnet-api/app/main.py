@@ -132,7 +132,6 @@ def add_magnet(payload: MagnetRequest, authorization: str | None = Header(defaul
     content_layout = None
     if category in {"Series", "AnimeSeries"}:
         save_path = resolve_save_path(format_series_folder(payload), category)
-        content_layout = "NoSubfolder"
     else:
         save_path = resolve_save_path(payload.folder, category)
 
