@@ -2,6 +2,7 @@ const extensionApi = typeof browser !== 'undefined' ? browser : chrome;
 const DEFAULT_NAS_URL = '';
 const DEFAULT_NAS_TOKEN = '';
 const DEFAULT_CATEGORY = 'Movies';
+const DEFAULT_SERIES_TITLE = '';
 
 function getStoredNasUrl() {
   return new Promise((resolve) => {
@@ -42,6 +43,20 @@ function getStoredCategory() {
 function setStoredCategory(category) {
   return new Promise((resolve) => {
     extensionApi.storage.local.set({ category }, () => resolve(category));
+  });
+}
+
+function getStoredSeriesTitle() {
+  return new Promise((resolve) => {
+    extensionApi.storage.local.get({ seriesTitle: DEFAULT_SERIES_TITLE }, (items) => {
+      resolve(items.seriesTitle || '');
+    });
+  });
+}
+
+function setStoredSeriesTitle(seriesTitle) {
+  return new Promise((resolve) => {
+    extensionApi.storage.local.set({ seriesTitle }, () => resolve(seriesTitle));
   });
 }
 
@@ -158,6 +173,16 @@ extensionApi.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
   if (message.type === 'getCategory') {
     getStoredCategory().then((category) => sendResponse({ ok: true, category }));
+    return true;
+  }
+
+  if (message.type === 'saveSeriesTitle') {
+    setStoredSeriesTitle(message.title || '').then(() => sendResponse({ ok: true }));
+    return true;
+  }
+
+  if (message.type === 'getSeriesTitle') {
+    getStoredSeriesTitle().then((title) => sendResponse({ ok: true, title }));
     return true;
   }
 

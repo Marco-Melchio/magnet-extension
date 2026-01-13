@@ -8,6 +8,7 @@ const nasTokenInput = document.getElementById('nasToken');
 const statusEl = document.getElementById('status');
 const toastEl = document.getElementById('toast');
 const refreshBtn = document.getElementById('refresh');
+const saveTitleBtn = document.getElementById('saveTitle');
 const sendBtn = document.getElementById('send');
 const categorySelect = document.getElementById('category');
 const seasonInput = document.getElementById('season');
@@ -77,6 +78,22 @@ function saveNasToken(value) {
   extensionApi.runtime.sendMessage({ type: 'saveNasToken', token: value });
 }
 
+function saveSeriesTitle(value) {
+  extensionApi.runtime.sendMessage({ type: 'saveSeriesTitle', title: value });
+}
+
+function loadSeriesTitle() {
+  return new Promise((resolve) => {
+    extensionApi.runtime.sendMessage({ type: 'getSeriesTitle' }, (response) => {
+      if (response && response.ok) {
+        resolve(response.title || '');
+      } else {
+        resolve('');
+      }
+    });
+  });
+}
+
 function debounce(fn, delay = 300) {
   let timeoutId;
   return (...args) => {
@@ -104,6 +121,7 @@ function toggleSeriesInputs(category) {
   seasonInput.required = shouldShow;
   seasonInput.disabled = !shouldShow;
   episodeInput.disabled = !shouldShow;
+  saveTitleBtn.disabled = !shouldShow;
   document.getElementById('seriesMeta').classList.toggle('is-disabled', !shouldShow);
   if (!shouldShow) {
     seasonInput.setCustomValidity('');
@@ -165,6 +183,17 @@ async function collectData() {
       resolve(response);
     });
   });
+}
+
+async function applySavedSeriesTitle() {
+  if (!isSeriesCategory(getSelectedCategory())) {
+    return;
+  }
+
+  const savedTitle = await loadSeriesTitle();
+  if (savedTitle) {
+    titleInput.value = savedTitle;
+  }
 }
 
 async function sendToNas() {
@@ -231,6 +260,14 @@ async function sendToNas() {
 }
 
 refreshBtn.addEventListener('click', collectData);
+saveTitleBtn.addEventListener('click', () => {
+  if (!isSeriesCategory(getSelectedCategory())) {
+    return;
+  }
+
+  saveSeriesTitle(titleInput.value.trim());
+  setStatus('Title saved', 'done');
+});
 sendBtn.addEventListener('click', sendToNas);
 const debouncedSaveNasUrl = debounce((value) => saveNasUrl(value));
 const debouncedSaveNasToken = debounce((value) => saveNasToken(value));
@@ -247,6 +284,7 @@ categorySelect.addEventListener('change', (event) => {
   setSelectedCategory(selectedCategory);
   saveCategory(selectedCategory);
   toggleSeriesInputs(selectedCategory);
+  applySavedSeriesTitle();
 });
 
 settingsToggle.addEventListener('click', () => toggleSettingsFields());
@@ -256,6 +294,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   await loadNasSettings();
   toggleSeriesInputs(getSelectedCategory());
   await collectData();
+  await applySavedSeriesTitle();
 });
 
 function startRefreshAnimation() {
