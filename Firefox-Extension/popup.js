@@ -18,6 +18,7 @@ const settingsBack = document.getElementById('settingsBack');
 const mainContent = document.getElementById('mainContent');
 
 let toastTimeout;
+let isSeriesTitleAutoFilled = false;
 
 const DEFAULT_CATEGORY = 'Movies';
 
@@ -107,7 +108,25 @@ function toggleSeriesInputs(category) {
   if (!shouldShow) {
     seasonInput.setCustomValidity('');
     episodeInput.setCustomValidity('');
+    isSeriesTitleAutoFilled = false;
   }
+}
+
+function syncSeriesTitleToSeason() {
+  if (!isSeriesCategory(getSelectedCategory())) {
+    return;
+  }
+
+  if (seasonInput.disabled) {
+    return;
+  }
+
+  if (seasonInput.value && !isSeriesTitleAutoFilled) {
+    return;
+  }
+
+  seasonInput.value = titleInput.value;
+  isSeriesTitleAutoFilled = true;
 }
 
 function toggleSettingsFields(forceState) {
@@ -218,6 +237,10 @@ const debouncedSaveNasToken = debounce((value) => saveNasToken(value));
 
 nasUrlInput.addEventListener('input', (event) => debouncedSaveNasUrl(event.target.value));
 nasTokenInput.addEventListener('input', (event) => debouncedSaveNasToken(event.target.value));
+titleInput.addEventListener('input', syncSeriesTitleToSeason);
+seasonInput.addEventListener('input', () => {
+  isSeriesTitleAutoFilled = false;
+});
 
 categorySelect.addEventListener('change', (event) => {
   const selectedCategory = event.target.value;
